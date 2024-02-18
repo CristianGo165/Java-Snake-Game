@@ -35,5 +35,8 @@ public class Snake {
         return snakeCells;
     }
 
+    public Cell GetSnakeHead(){
+        return snakeCells.getFirst();
+    }
     
 }
