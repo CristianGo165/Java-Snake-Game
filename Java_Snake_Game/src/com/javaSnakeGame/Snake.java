@@ -12,6 +12,8 @@ public class Snake {
         snakeCells.add(initialPos);
         head = initialPos;
         head.SetTypeCell(CellType.SNAKE_BODY);
+        
+        System.out.println("Snake Head At: " + head.GetRowCell() + ", " + head.GetColCell());
     }
 
     public void GrowSnake(){

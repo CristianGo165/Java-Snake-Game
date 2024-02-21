@@ -7,7 +7,7 @@ public class GameContainer implements Runnable {
 
 	private Thread thread;
 	private boolean running = false;
-	private final double UPDATE_LIMIT = 1.0 / 30.0;
+	private final double UPDATE_LIMIT = 1.0 / 15.0;
 
 	// Window Variables
 	private int width = 320, height = 240;
@@ -128,9 +128,6 @@ public class GameContainer implements Runnable {
 					frameTime = 0;
 					fps = frames;
 					frames = 0;
-					
-					//FPS Print Out
-					//System.out.println("FPS: " + fps);
 				}
 			}
 

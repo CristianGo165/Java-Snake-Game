@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 import com.vanillabean.engine.AbstractGame;
 import com.vanillabean.engine.GameContainer;
 import com.vanillabean.engine.Renderer;
-import com.vanillabean.engine.gfx.Image;
+//import com.vanillabean.engine.gfx.Image;
 import com.vanillabean.engine.gfx.ImageTile;
 
 public class Game extends AbstractGame{
@@ -24,7 +24,7 @@ public class Game extends AbstractGame{
     public final int DIRECTION_LEFT = 3;
     public final int DIRECTION_RIGHT = 4;
 
-    public int currentDirection = 0;
+    public int currentDirection;
     public boolean isGameOver;
 
 
@@ -32,7 +32,7 @@ public class Game extends AbstractGame{
         this.snake = initialSnake;
         this.board = board;
         image = new ImageTile("/Snake Game Tiles.png", 16, 16);
-        //image = new Image("/Test.png");
+        
     }
 
     public Snake GetSnake(){
@@ -65,50 +65,31 @@ public class Game extends AbstractGame{
     
         int row = currentPosition.GetRowCell();
         int col = currentPosition.GetColCell();
-    
-        if(currentDirection == DIRECTION_UP){col++;}
-        else if(currentDirection == DIRECTION_DOWN){col--;}
+        
+        if(currentDirection == DIRECTION_UP){col--;}
+        else if(currentDirection == DIRECTION_DOWN){col++;}
         else if(currentDirection == DIRECTION_LEFT){row--;}
         else if(currentDirection == DIRECTION_RIGHT){row++;}
         
+        
     
-        Cell nextCell = new Cell(row, col);
+        Cell nextCell = board.GetBoard()[row][col];
         return nextCell;
     }
-    
-    /*TEMP UPDATE FUNCTION
-    public void update(){
-        if(!isGameOver){
-            if(currentDirection != DIRECTION_NONE){
-                Cell nextCell = GetNextCell(snake.GetSnakeHead());
-                if(nextCell.getTypeCell() == CellType.WALL || nextCell.getTypeCell() == CellType.TRAP){
-                    currentDirection = DIRECTION_NONE;
-                    isGameOver = false;
-                } else{
-                    snake.MoveSnake(nextCell);
-                    if(nextCell.getTypeCell() == CellType.FOOD){
-                        snake.GrowSnake();
-                        board.GenerateApple();   
-                    }
-                }
-            }
-        }
-    }
-    //TEMP UPDATE FUNCTION*/
-    
     
     
     
     public static void main(String[] args) {
     	
-    	
-    	
-    	Cell initialCell = new Cell(6, 6);
+    	Cell initialCell = new Cell(5, 5);
         Snake snake = new Snake(initialCell);
         Board board = new Board(11, 11);
         Game newSnakeGame = new Game(snake, board);
         newSnakeGame.isGameOver = false;
-        //newSnakeGame.currentDirection = newSnakeGame.DIRECTION_DOWN;
+        newSnakeGame.currentDirection = newSnakeGame.DIRECTION_NONE;
+        
+		board.GenerateApple();
+
         
         GameContainer gc = new GameContainer(newSnakeGame);
     	gc.start();
@@ -138,23 +119,26 @@ public class Game extends AbstractGame{
 		if(!isGameOver){
             if(currentDirection != DIRECTION_NONE){
                 Cell nextCell = GetNextCell(snake.GetSnakeHead());
-                if(nextCell.getTypeCell() == CellType.WALL || nextCell.getTypeCell() == CellType.TRAP){
+                if(snake.CheckWallCollision(nextCell)){
                     currentDirection = DIRECTION_NONE;
                     isGameOver = false;
                 } else{
                     snake.MoveSnake(nextCell);
-                    System.out.println("snake Moved to: " + nextCell.GetRowCell() + ", " + nextCell.GetColCell());
-                    System.out.println(GetCurrentDirection());
+                    
+                    //System.out.println("snake Moved to: " + nextCell.GetRowCell() + ", " + nextCell.GetColCell());
+                    //System.out.println(GetCurrentDirection());
+                    
                     if(nextCell.getTypeCell() == CellType.FOOD){
                         snake.GrowSnake();
-                        board.GenerateApple();   
+                        board.GenerateApple();
                     }
                 }
             }
         }
         
 		
-		System.out.println("X: " + gc.getInput().getMouseX() + " Y: " + gc.getInput().getMouseY());
+		
+		//System.out.println("X: " + gc.getInput().getMouseX() + " Y: " + gc.getInput().getMouseY());
 		
 		
 		
@@ -173,15 +157,21 @@ public class Game extends AbstractGame{
 	public void render(GameContainer gc, Renderer renderer) {
 		for(int x = 0 ; x < (board.ROW_COUNT * 16) ; x += 16) {
 			for(int y = 0; y < (board.COL_COUNT * 16) ; y+= 16) {
-				if(board.getCell((x/16), (y/16)).getTypeCell() == CellType.SNAKE_BODY) {
-					renderer.drawImageTile(image, x, y, 0, 0);
-				} else if(board.getCell((x/16), (y/16)).getTypeCell() == CellType.FOOD) {
-					renderer.drawImageTile(image, x, y, 2, 0);
-				}else {
+				
+				if(board.GetBoard()[x/16][y/16].getTypeCell() == CellType.SPACE) {
 					renderer.drawImageTile(image, x, y, 1, 1);
+				}
+				if(board.GetBoard()[x/16][y/16].getTypeCell() == CellType.FOOD) {
+					renderer.drawImageTile(image, x, y, 2, 0);
+				}
+				if(board.GetBoard()[x/16][y/16].getTypeCell() == CellType.SNAKE_BODY){
+					renderer.drawImageTile(image, x, y, 0, 0);
 				}
 			}
 		}
+		
+		
+		
 		renderer.drawImageTile(image, gc.getInput().getMouseX(), gc.getInput().getMouseY(), 3, 3);
 	}
 }

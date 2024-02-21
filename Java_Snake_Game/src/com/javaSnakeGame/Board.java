@@ -14,6 +14,7 @@ public class Board {
         for(int i = 0 ; i < ROW_COUNT ; i++){
             for(int j = 0 ; j < COL_COUNT ; j++){
                 board[i][j] = new Cell(i, j);
+                board[i][j].SetTypeCell(CellType.SPACE);
             }
         }
     }
@@ -21,16 +22,13 @@ public class Board {
     public Cell[][] GetBoard(){
         return board;
     }
-    
-    public Cell getCell(int xIndex, int yIndex) {
-    	return board[xIndex][yIndex];
-    }
 
     public void GenerateApple(){
         while(true){
             int foodRow = (int)(Math.random() * ROW_COUNT);
             int foodCol = (int)(Math.random() * COL_COUNT);
             if(board[foodRow][foodCol].getTypeCell() != CellType.SNAKE_BODY){
+            	System.out.println("Food At: " + foodRow + ", " + foodCol);
                 board[foodRow][foodCol].SetTypeCell(CellType.FOOD);
                 break;
             }
