@@ -17,7 +17,7 @@ public class Window {
 	private JFrame frame;
 	private BufferedImage image;
 	private Canvas canvas;
-
+	
 	public BufferedImage getImage() {
 		return image;
 	}
