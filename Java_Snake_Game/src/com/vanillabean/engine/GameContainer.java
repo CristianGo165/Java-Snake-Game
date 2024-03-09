@@ -7,17 +7,21 @@ public class GameContainer implements Runnable {
 
 	private Thread thread;
 	private boolean running = false;
-	private final double UPDATE_LIMIT = 1.0 / 15.0;
+	private final double UPDATE_LIMIT = 1.0 /10.0;
 
 	// Window Variables
-	private int width = 320, height = 240;
+	private int width = 320, height = 320;
 	private float scale = 2;
-	private String title = "Vanilla Bean Engine v1.0";
+	private String title = "Java Snake Game v1.0";
 	// Window Variables
 
 	// Window Setup
 	private Window window;
 	// Window Setup
+	
+	//Player name field setup
+	private TextField textField;
+	//Player name field setup;
 
 	// Renderer Setup
 	private Renderer renderer;
@@ -33,6 +37,10 @@ public class GameContainer implements Runnable {
 
 	public Window getWindow() {
 		return window;
+	}
+	
+	public TextField getTextField() {
+		return this.textField;
 	}
 
 	public int getWidth() {
@@ -79,6 +87,8 @@ public class GameContainer implements Runnable {
 		window = new Window(this);
 
 		renderer = new Renderer(this);
+		
+		textField = new TextField();
 
 		input = new Input(this);
 
@@ -135,7 +145,7 @@ public class GameContainer implements Runnable {
 
 				renderer.clear();
 				aGame.render(this, renderer);
-				renderer.drawText("FPS: " + fps, 0, 0, 0xff00ffff);
+				//renderer.drawText("FPS: " + fps, this.getWidth()-35, this.getHeight() -10, 0xff00ffff);
 				window.update();
 				frames++;
 

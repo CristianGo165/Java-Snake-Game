@@ -1,9 +1,13 @@
 package com.javaSnakeGame;
 
+//import java.util.concurrent.ThreadLocalRandom;
+
 public class Board {
     final int ROW_COUNT;
     final int COL_COUNT;
+    final int borderSize = 1;
     private Cell[][] board;
+    
     public Board(int ROW_COUNT, int COL_COUNT){
 
         this.ROW_COUNT = ROW_COUNT;
@@ -15,20 +19,41 @@ public class Board {
             for(int j = 0 ; j < COL_COUNT ; j++){
                 board[i][j] = new Cell(i, j);
                 board[i][j].SetTypeCell(CellType.SPACE);
+                if(i == 0 || i == ROW_COUNT - 1 || j == 0 || j == COL_COUNT - 1) {
+                    board[i][j].SetTypeCell(CellType.WALL);
+                }
             }
         }
     }
+    
+    
+    
 
-    public Cell[][] GetBoard(){
+    public int getROW_COUNT() {
+		return ROW_COUNT;
+	}
+
+
+
+
+	public int getCOL_COUNT() {
+		return COL_COUNT;
+	}
+
+
+
+
+	public Cell[][] GetBoard(){
         return board;
     }
 
     public void GenerateApple(){
         while(true){
-            int foodRow = (int)(Math.random() * ROW_COUNT);
-            int foodCol = (int)(Math.random() * COL_COUNT);
+        	int foodRow = (int) (Math.random() * ((ROW_COUNT-1) - borderSize) + borderSize);
+        	int foodCol = (int) (Math.random() * ((ROW_COUNT-1) - borderSize) + borderSize);
+
             if(board[foodRow][foodCol].getTypeCell() != CellType.SNAKE_BODY){
-            	System.out.println("Food At: " + foodRow + ", " + foodCol);
+            	//System.out.println("Food At: " + foodRow + ", " + foodCol);
                 board[foodRow][foodCol].SetTypeCell(CellType.FOOD);
                 break;
             }
