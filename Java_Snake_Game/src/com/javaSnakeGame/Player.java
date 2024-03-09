@@ -34,6 +34,10 @@ public class Player {
 		return lives;
 	}
 	
+	public void setPlayerLives(int value) {
+		lives = value;
+	}
+	
 	public void changeLivesBy(int value) {
 		lives += value;
 	}
@@ -50,7 +54,11 @@ public class Player {
 		this.playerName = playerName;
 	}
 	
-	
-	
-	
+	public int getScoreSum() {
+		int sum = 0;
+		for(int i : topScores) {
+			sum += i;
+		}
+		return sum;
+	}
 }

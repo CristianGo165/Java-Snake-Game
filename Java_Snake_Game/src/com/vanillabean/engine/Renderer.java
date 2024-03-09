@@ -55,6 +55,19 @@ public class Renderer {
 			offset += font.getWidths()[unicode];
 		}
 	}
+	
+	public int getTextWidth(String text) {
+		text = text.toUpperCase();
+		
+		int offsetTotal = 0;
+		
+		for(int i = 0 ; i < text.length() ; i++) {
+			int unicode = text.codePointAt(i) - 32;
+			
+			offsetTotal += font.getWidths()[unicode];
+		}
+		return offsetTotal/2;
+	}
 
 	public void drawImage(Image image, int offsetX, int offsetY) {
 		
