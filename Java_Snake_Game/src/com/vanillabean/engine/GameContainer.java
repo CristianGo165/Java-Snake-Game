@@ -1,5 +1,11 @@
 package com.vanillabean.engine;
 
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+
 //import java.awt.event.KeyEvent;
 //import java.awt.event.MouseEvent;
 
@@ -34,6 +40,10 @@ public class GameContainer implements Runnable {
 	// Abstract Game Setup
 	private AbstractGame aGame;
 	// Abstract Game Setup
+	
+	//Setup Logo
+	private ImageIcon logo;
+	//Setup Logo
 
 	public Window getWindow() {
 		return window;
@@ -85,6 +95,13 @@ public class GameContainer implements Runnable {
 
 	public void start() {
 		window = new Window(this);
+		try {
+			logo = new ImageIcon(ImageIO.read(getClass().getResource("/tiles/Snake Game Logo.png")));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		window.getFrame().setIconImage(logo.getImage());
 
 		renderer = new Renderer(this);
 		
@@ -145,7 +162,7 @@ public class GameContainer implements Runnable {
 
 				renderer.clear();
 				aGame.render(this, renderer);
-				//renderer.drawText("FPS: " + fps, this.getWidth()-35, this.getHeight() -10, 0xff00ffff);
+				renderer.drawText("FPS: " + fps, 0, 10, 0xff00ffff);
 				window.update();
 				frames++;
 
