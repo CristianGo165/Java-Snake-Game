@@ -18,6 +18,7 @@ public class Window {
 	private BufferedImage image;
 	private Canvas canvas;
 	
+	
 	public BufferedImage getImage() {
 		return image;
 	}
@@ -47,7 +48,7 @@ public class Window {
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setVisible(true);
-
+		
 		canvas.createBufferStrategy(2);
 		bufferStrategy = canvas.getBufferStrategy();
 		graphics = bufferStrategy.getDrawGraphics();

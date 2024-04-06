@@ -13,7 +13,7 @@ public class PlayerData {
 	
 	
 	public PlayerData(){
-		playerData = new File("C:\\Users\\cgodi\\eclipse-workspace\\Java_Snake_Game\\res\\playerDat\\playerDat.txt");
+		playerData = new File("playerDat.txt");
 	}
 	
 	public void writeData(String playerName, int[] playerScores, boolean append) {

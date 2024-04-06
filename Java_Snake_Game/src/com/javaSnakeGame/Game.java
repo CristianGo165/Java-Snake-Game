@@ -38,6 +38,7 @@ public class Game extends AbstractGame{
     public boolean isGameStarted;
     public boolean readInput;
     public int startMenuOffset;
+    public boolean isGameMuted;
     
     
     Scanner scanner = new Scanner(System.in);
@@ -57,6 +58,7 @@ public class Game extends AbstractGame{
         startingCell = new Cell((int) Math.floor(board.getROW_COUNT()/2), (int) Math.floor(board.getROW_COUNT()/2));
         this.isGameStarted = false;
         this.startMenuOffset = 50;
+        this.isGameMuted = false;
         
         //Image and Audio Initialization
         image = new ImageTile("/tiles/Snake Game Tiles.png", 16, 16);
@@ -113,7 +115,7 @@ public class Game extends AbstractGame{
     	
     }
 
-    public void restartGame() {
+    public void nextGame() {
     	wallBump.play();
     	board = new Board(boardSize, boardSize);
     	board.GenerateApple();
@@ -123,6 +125,20 @@ public class Game extends AbstractGame{
     	}
     	player.resetPlayerScore();
     	gameCount++;
+    }
+    
+    public void resetGame() {
+    	isGameOver = false;
+    	isGameStarted = false;
+    	gameCount = 0;
+    	board = new Board(boardSize, boardSize);
+    	board.GenerateApple();
+    	player.setPlayerLives(3);
+    	snake.resetSnake(startingCell);
+    	player.resetPlayerScore();
+    	setPlayerDirection(DIRECTION_NONE);
+    	gameTheme.stop();
+    	introSound.play();
     }
 
     private Cell GetNextCell(Cell currentPosition){
@@ -171,18 +187,18 @@ public class Game extends AbstractGame{
 	public void update(GameContainer gc, float deltaTime) {
 		
 		
-		if(gc.getInput().iskeyPressed(KeyEvent.VK_W) && currentDirection != DIRECTION_DOWN && isGameStarted) {
+		if((gc.getInput().iskeyPressed(KeyEvent.VK_W) || gc.getInput().iskeyPressed(KeyEvent.VK_UP)) && currentDirection != DIRECTION_DOWN && isGameStarted) {
 			//System.out.println("W is pressed");
 			setPlayerDirection(DIRECTION_UP);		}
-		else if(gc.getInput().iskeyPressed(KeyEvent.VK_A) && currentDirection != DIRECTION_RIGHT && isGameStarted) {
+		else if((gc.getInput().iskeyPressed(KeyEvent.VK_A) || gc.getInput().iskeyPressed(KeyEvent.VK_LEFT)) && currentDirection != DIRECTION_RIGHT && isGameStarted) {
 			//System.out.println("A is pressed");
 			setPlayerDirection(DIRECTION_LEFT);
 		}
-		else if(gc.getInput().iskeyPressed(KeyEvent.VK_S) && currentDirection != DIRECTION_UP && isGameStarted) {
+		else if((gc.getInput().iskeyPressed(KeyEvent.VK_S) || gc.getInput().iskeyPressed(KeyEvent.VK_DOWN)) && currentDirection != DIRECTION_UP && isGameStarted) {
 			//System.out.println("S is pressed");
 			setPlayerDirection(DIRECTION_DOWN);
 		}
-		else if(gc.getInput().iskeyPressed(KeyEvent.VK_D) && currentDirection != DIRECTION_LEFT && isGameStarted) {
+		else if((gc.getInput().iskeyPressed(KeyEvent.VK_D) || gc.getInput().iskeyPressed(KeyEvent.VK_RIGHT)) && currentDirection != DIRECTION_LEFT && isGameStarted) {
 			//System.out.println("D is pressed");
 			setPlayerDirection(DIRECTION_RIGHT);
 		}
@@ -194,7 +210,6 @@ public class Game extends AbstractGame{
 				//gameTheme.play();
 				gameTheme.loop();
 			}
-			System.out.println(isGameStarted);
 		}
 		
 		if(gc.getInput().iskeyPressed(KeyEvent.VK_SHIFT)) {
@@ -213,15 +228,27 @@ public class Game extends AbstractGame{
 			System.exit(0);
 		}
 		
-		//FOR DEBUGING
 		if(gc.getInput().iskeyPressed(KeyEvent.VK_R)) {
-			board.GenerateApple();
+			resetGame();
 		}
+
 		if(gc.getInput().iskeyPressed(KeyEvent.VK_L)) {
 			if(!isGameStarted) {
 				playerData.readData(player);
 			}
 		}
+		
+		if(gc.getInput().iskeyPressed(KeyEvent.VK_M)) {
+			if(isGameMuted) {
+				isGameMuted = false;
+				gameTheme.setVolume(-10);
+			}else {
+				isGameMuted = true;
+				gameTheme.setVolume(-75);
+			}
+		}
+		
+		//FOR DEBUGING
 		//FOR DEBUGING
 		
 		if(!isGameOver && isGameStarted){
@@ -241,7 +268,7 @@ public class Game extends AbstractGame{
                     }
                     player.changeLivesBy(-1);
                     currentDirection = DIRECTION_NONE;
-                    restartGame();
+                    nextGame();
 
                     
                 } else{
@@ -322,27 +349,33 @@ public class Game extends AbstractGame{
 	
 			}
 			//Draw Lives
-			renderer.drawText("Score: " + player.getPlayerScore(), 280, 0, 0xffffffff);
+			renderer.drawText("Score: " + player.getPlayerScore(), 250, 0, 0xffffffff);
 			renderer.drawText("Player: " + player.getPlayerName(), 0, 0, 0xffffffff);
+			
+			renderer.drawText("Move: WASD/ARROW KEYS", 0, 310, 0xffffffff);
+			renderer.drawText("Mute Music: M", 100, 310, 0xffffffff);
+			renderer.drawText("Restart Game: R", 175, 310, 0xffffffff);
+			renderer.drawText("Quit Game: ESC", 250, 310, 0xffffffff);
 		}
 		
 		//Draw Gameplay
 		
 		else {
-			renderer.drawText("Java Snake Game", startMenuOffset, 75, 0xffffffff);
-			renderer.drawText("Press L to load previous save", startMenuOffset, 160, 0xffffffff);
-			renderer.drawText("Press Shift to load new save", startMenuOffset, 170, 0xffffffff);
-			renderer.drawText("Player Name: " + player.getPlayerName(), startMenuOffset, 190, 0xffffffff);
-			renderer.drawText("High Scores: ", startMenuOffset, 200, 0xffffffff);
+			renderer.drawText("Java Snake Game", 160 - renderer.getTextWidth("Java Snake Game"), 50, 0xffffffff);
+			renderer.drawText("Press L to load previous save", 160 - renderer.getTextWidth("Press L to load previous save"), 160, 0xffffffff);
+			renderer.drawText("Press Shift to load new save", 160 - renderer.getTextWidth("Press Shift to load new save"), 170, 0xffffffff);
+			renderer.drawText("Player Name: " + player.getPlayerName(), 160 - renderer.getTextWidth("Player Name: " + player.getPlayerName()), 190, 0xffffffff);
+			renderer.drawText("High Scores: ", 160 - renderer.getTextWidth("High Scores: "), 200, 0xffffffff);
 			for(int i = 0 ; i < 3 ; i++) {
-				renderer.drawText(Integer.toString(player.getTopScores()[i]), startMenuOffset, (200 + (10*(i + 1))), 0xffffffff);
-
+				renderer.drawText(Integer.toString(player.getTopScores()[i]), 160 - renderer.getTextWidth(Integer.toString(player.getTopScores()[i])), (200 + (10*(i + 1))), 0xffffffff);
 			}
+			
+			renderer.drawText("Score Sum: " + player.getScoreSum(), 160 - renderer.getTextWidth("Score Sum: " + player.getScoreSum()), 240, 0xffffffff);
 		}
 
 		
 		if(ReturnGameOver()){
-			renderer.drawText("Game Over :( ", 160, 160, 0xffffffff);
+			renderer.drawText("Game Over :(", 160 - renderer.getTextWidth("Game Over :("), 160, 0xffffffff);
 		}
 		
 	}
